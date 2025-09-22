@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Today I Learned 블로그
 
-## Getting Started
+Next.js + MDX + Contentlayer로 구축된 개인 TIL(Today I Learned) 블로그입니다.
 
-First, run the development server:
+## 특징
+
+- 📝 **MDX 지원**: 마크다운에서 React 컴포넌트 사용 가능
+- 🎨 **현대적인 UI**: Tailwind CSS로 구현된 깔끔한 디자인
+- 🔍 **카테고리별 분류**: 학습 내용을 카테고리별로 체계적으로 관리
+- 📅 **월간 기록**: 월별로 학습 기록을 확인 가능
+- 💡 **코드 하이라이팅**: Prism.js를 활용한 문법 강조
+- 🔗 **헤딩 앵커**: 자동 생성되는 목차 링크
+- 📱 **반응형 디자인**: 모든 디바이스에서 최적화된 경험
+
+## 프로젝트 구조
+
+```
+blog/                    # Next.js 블로그 앱
+├── src/
+│   ├── app/            # App Router 페이지
+│   │   ├── page.tsx           # 홈페이지
+│   │   ├── posts/             # 포스트 관련 페이지
+│   │   ├── categories/        # 카테고리 페이지
+│   │   └── monthly/           # 월간 기록 페이지
+│   └── components/     # 재사용 가능한 컴포넌트
+│       └── mdx-components.tsx # MDX 커스텀 컴포넌트
+├── contentlayer.config.ts     # Contentlayer 설정
+└── next.config.ts             # Next.js 설정
+
+../documents/           # 마크다운 파일들 (소스)
+└── React/
+    └── Form.md        # 예시 포스트
+```
+
+## 설치 및 실행
+
+### 1. 의존성 설치
+
+```bash
+cd blog
+npm install
+```
+
+### 2. 개발 서버 실행
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. 프로덕션 빌드
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## 사용 방법
 
-To learn more about Next.js, take a look at the following resources:
+### 새 포스트 작성
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `../documents` 폴더에 카테고리별 폴더를 생성
+2. 마크다운 파일(`.md`) 작성
+3. frontmatter로 메타데이터 추가 (선택사항)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+예시:
+```markdown
+---
+title: "React 폼 관리"
+description: "React에서 폼을 효과적으로 관리하는 방법들"
+date: "2024-01-15"
+tags: ["react", "form", "frontend"]
+---
 
-## Deploy on Vercel
+# React 폼 관리
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+여기에 내용을 작성하세요...
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 지원되는 frontmatter 필드
+
+- `title`: 포스트 제목 (없으면 파일명에서 자동 추출)
+- `description`: 포스트 설명
+- `date`: 작성일 (없으면 파일 수정일 사용)
+- `tags`: 태그 배열
+- `category`: 카테고리 (폴더명에서 자동 추출)
+
+### MDX 기능
+
+- **코드 블록**: 문법 강조 및 복사 버튼
+- **헤딩 앵커**: 클릭 가능한 헤딩 링크
+- **테이블**: GitHub Flavored Markdown 테이블
+- **인용구**: 스타일링된 blockquote
+- **링크**: 내부/외부 링크 자동 구분
+
+## 기술 스택
+
+- **Framework**: Next.js 15 (App Router)
+- **언어**: TypeScript
+- **스타일링**: Tailwind CSS
+- **콘텐츠**: MDX + Contentlayer
+- **마크다운 처리**: 
+  - remark-gfm (GitHub Flavored Markdown)
+  - remark-prism (코드 하이라이팅)
+  - rehype-slug (헤딩 ID)
+  - rehype-autolink-headings (헤딩 앵커)
+
+## 라이선스
+
+MIT License
