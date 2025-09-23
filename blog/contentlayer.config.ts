@@ -1,4 +1,4 @@
-import { defineDocumentType, makeSource } from "contentlayer/source-files";
+import { defineDocumentType, makeSource } from "contentlayer2/source-files";
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
@@ -70,7 +70,7 @@ export const Post = defineDocumentType(() => ({
 }));
 
 export default makeSource({
-  contentDirPath: "../documents", // TIL/documents 폴더를 소스로 사용
+  contentDirPath: `${process.cwd()}/../documents`, // TIL/documents 폴더를 소스로 사용
   documentTypes: [Post],
   disableImportAliasWarning: true,
 });
