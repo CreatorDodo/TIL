@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "export",
   trailingSlash: true,
+  assetPrefix: process.env.NODE_ENV === "production" ? "/TIL" : "",
+  basePath: process.env.NODE_ENV === "production" ? "/TIL" : "",
   images: {
     unoptimized: true,
   },
