@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,28 +32,28 @@ export default function RootLayout({
           <header className="border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-4xl mx-auto px-4 py-4">
               <nav className="flex items-center justify-between">
-                <a href="/" className="text-xl font-bold">
+                <Link href="/" className="text-xl font-bold">
                   Today I Learned
-                </a>
+                </Link>
                 <div className="flex space-x-4">
-                  <a
+                  <Link
                     href="/"
                     className="hover:text-blue-600 dark:hover:text-blue-400"
                   >
                     홈
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/categories"
                     className="hover:text-blue-600 dark:hover:text-blue-400"
                   >
                     카테고리
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/monthly"
                     className="hover:text-blue-600 dark:hover:text-blue-400"
                   >
                     월간 기록
-                  </a>
+                  </Link>
                 </div>
               </nav>
             </div>

@@ -1,5 +1,5 @@
-import { allPosts } from "@/lib/posts";
-import { format, parseISO } from "date-fns";
+import { allPosts, Post } from "@/lib/posts";
+import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ export default function MonthlyPage() {
     acc[monthKey].count += 1;
 
     return acc;
-  }, {} as Record<string, { label: string; posts: any[]; count: number }>);
+  }, {} as Record<string, { label: string; posts: Post[]; count: number }>);
 
   // 월별 데이터를 최신순으로 정렬
   const sortedMonths = Object.entries(monthlyPosts).sort(([a], [b]) =>
