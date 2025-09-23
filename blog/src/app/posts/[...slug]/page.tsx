@@ -7,13 +7,14 @@ import ReactMarkdown from "react-markdown";
 import { mdxComponents } from "@/components/mdx-components";
 
 interface PostPageProps {
-  params: {
+  params: Promise<{
     slug: string[];
-  };
+  }>;
 }
 
 async function getPostFromParams(params: PostPageProps["params"]) {
-  const slug = params?.slug?.join("/");
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug?.join("/");
   const post = allPosts.find((post) => post.slug === slug);
 
   if (!post) {
@@ -23,9 +24,7 @@ async function getPostFromParams(params: PostPageProps["params"]) {
   return post;
 }
 
-export async function generateStaticParams(): Promise<
-  PostPageProps["params"][]
-> {
+export async function generateStaticParams() {
   return allPosts.map((post) => ({
     slug: post.slug.split("/"),
   }));

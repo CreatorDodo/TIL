@@ -5,14 +5,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 }
 
-export async function generateStaticParams(): Promise<
-  CategoryPageProps["params"][]
-> {
+export async function generateStaticParams() {
   const categories = [...new Set(allPosts.map((post) => post.category))];
   return categories.map((category) => ({
     category: category,
@@ -20,7 +18,7 @@ export async function generateStaticParams(): Promise<
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
-  const { category } = params;
+  const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
   const categoryPosts = allPosts.filter(
     (post) => post.category === decodedCategory
@@ -36,8 +34,8 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = params;
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
 
   const categoryPosts = allPosts
