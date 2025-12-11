@@ -4,6 +4,7 @@ import { ko } from "date-fns/locale";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { mdxComponents } from "@/components/mdx-components";
 
 interface PostPageProps {
@@ -95,7 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
       {/* 포스트 내용 */}
       <article className="max-w-none">
-        <ReactMarkdown components={mdxComponents}>
+        <ReactMarkdown components={mdxComponents} remarkPlugins={[remarkGfm]}>
           {post.body.raw}
         </ReactMarkdown>
       </article>
