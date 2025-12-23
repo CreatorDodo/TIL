@@ -256,3 +256,308 @@ function processArray(uint256[] calldata inputValues) external {
 - `storage`: 상태 변수 수정이 필요할 때 사용
 
 ---
+
+## 4. 함수: 동작 수행
+
+함수는 특정 동작을 수행하는 코드 블록입니다:
+
+```solidity
+contract Counter {
+    uint256 public count = 0;
+
+    function increment() public {
+        count = count + 1;  // count += 1; 도 가능
+    }
+
+    function decrement() public {
+        count = count - 1;  // count -= 1; 도 가능
+    }
+}
+```
+
+### 4.1 함수 구성 요소
+
+```solidity
+function add(uint256 a, uint256 b) public pure returns (uint256) {
+    return a + b;
+}
+```
+
+| 구성 요소       | 설명                                 |
+| --------------- | ------------------------------------ |
+| **이름**        | `add` - 함수를 호출할 때 사용        |
+| **매개변수**    | `(uint256 a, uint256 b)` - 입력 값   |
+| **가시성**      | `public` - 누가 호출할 수 있는지     |
+| **상태 변경자** | `pure` - 상태를 읽거나 수정하지 않음 |
+| **반환값**      | `returns (uint256)` - 출력 타입      |
+| **함수 본문**   | `{ return a + b; }` - 실행 코드      |
+
+### 4.2 함수 가시성
+
+| 가시성     | 설명                                                  |
+| ---------- | ----------------------------------------------------- |
+| `public`   | 누구나 호출 가능                                      |
+| `private`  | 이 컨트랙트만 호출 가능                               |
+| `internal` | 이 컨트랙트와 상속받은 컨트랙트만 호출 가능           |
+| `external` | 컨트랙트 외부에서만 호출 가능 (특정 용도에 더 효율적) |
+
+### 4.3 특수 함수 타입
+
+**view**: 상태를 읽을 수 있지만 수정 불가
+
+```solidity
+function getCount() public view returns (uint256) {
+    return count;
+}
+```
+
+**pure**: 상태를 읽거나 수정 불가
+
+```solidity
+function addNumbers(uint256 a, uint256 b) public pure returns (uint256) {
+    return a + b;
+}
+```
+
+**constructor**: 컨트랙트 배포 시 단 한 번만 실행
+
+```solidity
+constructor() {
+    owner = msg.sender;
+}
+```
+
+**payable**: 이더를 받을 수 있는 함수
+
+```solidity
+mapping(address => uint256) balances;
+
+function sendMeMoney() public payable {
+    balances[msg.sender] += msg.value;
+}
+```
+
+---
+
+## 5. 트랜잭션 컨텍스트와 전역 변수
+
+Solidity는 특별한 내장 변수를 통해 트랜잭션 정보와 블록체인 데이터에 접근할 수 있습니다.
+
+### 5.1 트랜잭션 컨텍스트 변수
+
+#### msg.sender
+
+현재 함수를 호출한 주소 (지갑 주소 또는 다른 컨트랙트):
+
+```solidity
+contract OwnerExample {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;  // 배포자가 owner가 됨
+    }
+}
+```
+
+#### msg.value
+
+함수 호출과 함께 전송된 ETH 양 (wei 단위):
+
+```solidity
+contract PaymentExample {
+    mapping(address => uint256) public payments;
+
+    function makePayment() public payable {
+        require(msg.value > 0, "Must send some ETH");
+        payments[msg.sender] += msg.value;
+    }
+}
+```
+
+#### msg.data
+
+트랜잭션의 전체 calldata (함수 시그니처와 인자 포함):
+
+```solidity
+contract DataExample {
+    bytes public lastCallData;
+
+    function recordCallData() public {
+        lastCallData = msg.data;
+    }
+}
+```
+
+### 5.2 블록 정보 변수
+
+#### block.timestamp
+
+현재 블록의 타임스탬프 (Unix epoch 이후 초):
+
+```solidity
+contract TimestampExample {
+    uint256 public contractCreationTime;
+
+    constructor() {
+        contractCreationTime = block.timestamp;
+    }
+
+    function hasDurationPassed(uint256 durationInSeconds) public view returns (bool) {
+        return (block.timestamp >= contractCreationTime + durationInSeconds);
+    }
+}
+```
+
+> ⚠️ 정밀한 타이밍에 의존하지 마세요 (채굴자가 어느 정도 유연성을 가짐)
+
+#### block.number
+
+현재 블록 번호:
+
+```solidity
+contract BlockNumberExample {
+    uint256 public deploymentBlockNumber;
+
+    constructor() {
+        deploymentBlockNumber = block.number;
+    }
+
+    function getBlocksPassed() public view returns (uint256) {
+        return block.number - deploymentBlockNumber;
+    }
+}
+```
+
+### 5.3 실제 예시: 시간 잠금 지갑
+
+```solidity
+contract TimeLockedWallet {
+    address public owner;
+    uint256 public unlockTime;
+
+    event Deposit(address indexed sender, uint256 amount, uint256 timestamp);
+    event Withdrawal(uint256 amount, uint256 timestamp);
+
+    constructor(uint256 _unlockDuration) {
+        owner = msg.sender;
+        unlockTime = block.timestamp + _unlockDuration;
+    }
+
+    function deposit() public payable {
+        require(msg.value > 0, "Must deposit some ETH");
+        emit Deposit(msg.sender, msg.value, block.timestamp);
+    }
+
+    function withdraw() public {
+        require(msg.sender == owner, "You are not the owner");
+        require(block.timestamp >= unlockTime, "Funds are still locked");
+        require(address(this).balance > 0, "No funds to withdraw");
+
+        uint256 balance = address(this).balance;
+        payable(owner).transfer(balance);
+
+        emit Withdrawal(balance, block.timestamp);
+    }
+
+    function withdrawalStatus() public view returns (bool canWithdraw, uint256 remainingTime) {
+        if (block.timestamp >= unlockTime) {
+            return (true, 0);
+        } else {
+            return (false, unlockTime - block.timestamp);
+        }
+    }
+}
+```
+
+---
+
+## 6. 제어 구조
+
+### 6.1 조건문 (if/else)
+
+```solidity
+function checkValue(uint256 value) public pure returns (string memory) {
+    if (value > 100) {
+        return "Value is greater than 100";
+    } else if (value == 100) {
+        return "Value is exactly 100";
+    } else {
+        return "Value is less than 100";
+    }
+}
+```
+
+### 6.2 반복문
+
+```solidity
+function sumArray(uint256[] memory numbers) public pure returns (uint256) {
+    uint256 total = 0;
+
+    for (uint i = 0; i < numbers.length; i++) {
+        total += numbers[i];
+    }
+
+    return total;
+}
+```
+
+> ⚠️ **주의**: 각 연산은 가스를 소비하고, 반복이 너무 많으면 블록 가스 한도를 초과할 수 있습니다. 이를 **서비스 거부(DoS)** 공격이라고 합니다.
+
+---
+
+## 7. 에러 처리
+
+### 7.1 Require 문
+
+조건을 확인하고 실패하면 트랜잭션을 되돌립니다:
+
+```solidity
+function withdraw(uint256 amount) public {
+    require(balances[msg.sender] >= amount, "Insufficient balance");
+    balances[msg.sender] -= amount;
+    payable(msg.sender).transfer(amount);
+}
+```
+
+### 7.2 커스텀 에러 (권장)
+
+가스 효율성을 위해 커스텀 에러를 정의하세요:
+
+```solidity
+error InsufficientBalance(address user, uint256 balance, uint256 withdrawAmount);
+
+function withdraw(uint256 amount) public {
+    if (balances[msg.sender] < amount) {
+        revert InsufficientBalance(msg.sender, balances[msg.sender], amount);
+    }
+    balances[msg.sender] -= amount;
+    payable(msg.sender).transfer(amount);
+}
+```
+
+---
+
+## 8. 이벤트: 외부 세계와 통신
+
+이벤트는 중요한 일이 발생했을 때 컨트랙트가 하는 알림입니다. 상태가 업데이트될 때 이벤트를 발생시켜야 합니다:
+
+```solidity
+contract Token {
+    event Transfer(address indexed from, address indexed to, uint256 amount);
+
+    mapping(address => uint256) public balances;
+
+    function transfer(address to, uint256 amount) public {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        balances[msg.sender] -= amount;
+        balances[to] += amount;
+
+        emit Transfer(msg.sender, to, amount);
+    }
+}
+```
+
+> 📌 `indexed` 키워드는 나중에 특정 이벤트를 검색하기 쉽게 만듭니다.
+
+---
