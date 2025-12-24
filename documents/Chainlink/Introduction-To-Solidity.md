@@ -561,3 +561,163 @@ contract Token {
 > 📌 `indexed` 키워드는 나중에 특정 이벤트를 검색하기 쉽게 만듭니다.
 
 ---
+
+## 9. 모디파이어: 재사용 가능한 함수 조건
+
+모디파이어는 함수에 대한 재사용 가능한 로직을 만드는 방법입니다:
+
+```solidity
+contract Owned {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;  // 이 자리표시자가 함수 코드로 대체됨
+    }
+
+    function setOwner(address newOwner) public onlyOwner {
+        owner = newOwner;
+    }
+}
+```
+
+> 📌 모디파이어의 `_`는 함수 코드가 실행될 위치를 나타냅니다. `_`가 모디파이어 로직 전에 있으면 함수가 먼저 실행됩니다.
+
+---
+
+## 10. 인터페이스
+
+인터페이스는 컨트랙트가 구현해야 하는 함수를 정의하는 **청사진** 역할을 합니다 (구현 방법은 명시하지 않음).
+
+### 인터페이스 특징
+
+- ❌ 함수 구현 불가
+- ❌ 상태 변수 불가
+- ❌ 생성자 불가
+- ❌ 다른 컨트랙트 상속 불가
+- ✅ 함수 시그니처만 선언
+
+### 예시
+
+```solidity
+interface IPayable {
+    function pay(address recipient, uint256 amount) external returns (bool);
+    function getBalance(address account) external view returns (uint256);
+}
+
+contract PaymentProcessor is IPayable {
+    mapping(address => uint256) private balances;
+
+    function pay(address recipient, uint256 amount) external override returns (bool) {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount;
+        balances[recipient] += amount;
+        return true;
+    }
+
+    function getBalance(address account) external view override returns (uint256) {
+        return balances[account];
+    }
+}
+```
+
+> 💡 인터페이스는 알 수 없는 컨트랙트와 상호작용할 때 특히 유용합니다. 호출할 수 있는 함수와 호출 방법만 알면 됩니다.
+
+---
+
+## 11. 프로그래밍 모범 사례
+
+| 원칙                       | 설명                                      |
+| -------------------------- | ----------------------------------------- |
+| **단순하게 유지**          | 복잡한 코드는 보안하기 어려움             |
+| **상태 변경 전 조건 확인** | require 또는 커스텀 에러로 모든 입력 검증 |
+| **명확한 이름 사용**       | 코드를 이해하기 쉽게 작성                 |
+| **코드 주석 작성**         | 무엇을 하는지가 아니라 왜 하는지 설명     |
+| **가스 비용 인식**         | 모든 연산은 가스 비용 발생                |
+
+### 명명 규칙
+
+| 대상                       | 스타일           | 예시          |
+| -------------------------- | ---------------- | ------------- |
+| 컨트랙트                   | PascalCase       | `SimpleToken` |
+| 함수/변수                  | camelCase        | `balanceOf`   |
+| Private/Internal 상태 변수 | `_` 접두사       | `_owner`      |
+| Constant                   | UPPER_SNAKE_CASE | `MAX_SUPPLY`  |
+
+---
+
+## 12. ABI (Application Binary Interface)
+
+ABI는 애플리케이션에게 블록체인의 컨트랙트와 정확히 어떻게 통신해야 하는지 알려주는 **스마트 컨트랙트의 사용 설명서**입니다.
+
+### ABI가 필요한 이유
+
+배포된 스마트 컨트랙트와 통신할 때 웹사이트나 애플리케이션은 다음을 알아야 합니다:
+
+- 어떤 함수가 존재하는지
+- 각 함수에 필요한 매개변수
+- 반환되는 데이터 타입
+
+### ABI의 역할
+
+- ✅ 스마트 컨트랙트의 함수 호출
+- ✅ 함수 인자 인코딩
+- ✅ 반환 데이터 디코딩
+- ✅ 블록체인 외부에서 컨트랙트와 상호작용
+
+### ABI 형식
+
+ABI는 컨트랙트에서 공개적으로 보이는 모든 것을 설명하는 JSON 배열입니다:
+
+```solidity
+// Solidity 스마트 컨트랙트
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SimpleMath {
+    function add(uint256 a, uint256 b) public pure returns (uint256) {
+        return a + b;
+    }
+}
+```
+
+컴파일 후 생성되는 ABI:
+
+```json
+[
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "a", "type": "uint256" },
+      { "internalType": "uint256", "name": "b", "type": "uint256" }
+    ],
+    "name": "add",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]
+```
+
+### 실제 사용 예시 (ethers.js)
+
+```javascript
+const contract = new ethers.Contract(contractAddress, contractABI, provider);
+await contract.deposit(100);
+```
+
+---
+
+## 13. 다음 단계
+
+1. **간단한 컨트랙트로 연습**: 기존 예제 수정부터 시작
+2. **Remix IDE 사용**: https://remix.ethereum.org - 브라우저 기반 개발 환경
+3. **다른 컨트랙트 읽기**: 기존 코드에서 배우기
+4. **OpenZeppelin 탐구**: 잘 작성되고 안전한 컨트랙트 학습
+5. **가스 최적화 학습**: 연산 비용 이해
+6. **단계별 진행**: 처음부터 복잡한 애플리케이션 구축 시도하지 않기
+
+> 💡 프로그래밍은 연습으로 발전하는 기술입니다. 작은 프로젝트부터 시작해서 점차 복잡한 솔루션으로 나아가세요.
