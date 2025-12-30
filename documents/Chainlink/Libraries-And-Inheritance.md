@@ -237,3 +237,106 @@ contract TokenY is BaseA, BaseB {
 ```
 
 ---
+
+## 실용적인 응용
+
+### OpenZeppelin 컨트랙트 사용하기
+
+상속의 가장 일반적인 사용 사례 중 하나는 OpenZeppelin과 같은 의존성에서 표준화된 컨트랙트를 확장하는 것입니다:
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+// ERC20을 상속하여 커스텀 토큰 생성
+contract MyToken is ERC20 {
+    constructor() ERC20("My Token", "MTK") {
+        // 배포자에게 100만 토큰 발행
+        _mint(msg.sender, 1000000 * 10**18);
+    }
+
+    // 커스텀 기능 추가
+    function burn(uint256 amount) public {
+        _burn(msg.sender, amount);
+    }
+}
+```
+
+### 토큰 전송에 수수료 추가하기
+
+상속을 통해 표준 동작을 커스터마이즈할 수 있습니다:
+
+```solidity
+contract FeeToken is ERC20 {
+    address public feeCollector;
+
+    constructor(address _feeCollector) ERC20("Fee Token", "FEE") {
+        feeCollector = _feeCollector;
+        _mint(msg.sender, 1000000 * 10**18);
+    }
+
+    // 1% 수수료를 추가하기 위해 transfer 함수 오버라이드
+    function transfer(address to, uint256 amount) public override returns (bool) {
+        uint256 fee = amount / 100; // 1% 수수료
+        uint256 netAmount = amount - fee;
+
+        // 수수료를 수집자에게 전송
+        super.transfer(feeCollector, fee);
+
+        // 나머지 금액을 수신자에게 전송
+        return super.transfer(to, netAmount);
+    }
+}
+```
+
+---
+
+## 시작하는 데 도움이 되는 도구
+
+### OpenZeppelin Contracts Wizard
+
+[OpenZeppelin Contract Wizard](https://wizard.openzeppelin.com/)는 몇 번의 클릭만으로 커스터마이즈된 스마트 컨트랙트를 생성하는 유용한 도구입니다. 다음에 적합합니다:
+
+- 토큰 컨트랙트 생성 (ERC20, ERC721, ERC1155)
+- 보안 기능 추가
+- 접근 제어 구현
+- 거버넌스 설정
+
+이 마법사는 추가로 커스터마이즈할 수 있는 프로덕션 수준의 코드를 생성합니다.
+
+### 외부 코드 임포트하기
+
+다양한 소스에서 코드를 임포트할 수 있습니다:
+
+```solidity
+// npm 패키지에서 임포트
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+// 특정 컨트랙트 임포트
+import {ERC721, IERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+
+// 로컬 파일에서 임포트
+import "./MyContract.sol";
+```
+
+---
+
+## 핵심 요약
+
+1. **라이브러리**는 유틸리티 함수에 적합하며 여러 컨트랙트에서 사용 가능
+2. **상속**은 기존 컨트랙트 위에 구축하고 기능을 확장할 수 있게 함
+3. 함수 오버라이딩 시 부모 컨트랙트에는 `virtual`, 자식 컨트랙트에는 `override` 사용
+4. `super` 키워드로 부모 구현을 호출할 수 있음
+5. 다중 상속 시 부모 컨트랙트의 순서가 중요함
+6. OpenZeppelin은 확장할 수 있는 검증된 컨트랙트를 제공함
+
+---
+
+## 모범 사례
+
+- **단순하게 유지**: 따라가기 어려운 깊은 상속 체인 피하기
+- **함수 오버라이드 문서화**: 무엇을 왜 변경하는지 명확하게 주석 달기
+- **다중 상속 주의**: 제대로 관리하지 않으면 예상치 못한 동작이 발생할 수 있음
+- **신뢰할 수 있는 코드 재사용**: 가능하면 OpenZeppelin과 같은 잘 감사된 컨트랙트 위에 구축
