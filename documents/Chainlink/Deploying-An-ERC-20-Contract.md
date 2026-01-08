@@ -50,3 +50,37 @@ ERC-20 토큰 컨트랙트를 작성했으니, 이제 라이브 테스트넷에 
 | `balanceOf`   | 특정 지갑의 잔액 확인 (지갑 주소를 파라미터로 전달) |
 
 > 현재 토큰이 민팅되지 않았으므로 두 함수 모두 `0`을 반환한다.
+
+## Adding Your Token to MetaMask
+
+테스트넷에 컨트랙트를 배포했다면, 다음 단계로 MetaMask에 토큰을 추가할 수 있다:
+
+1. **토큰 컨트랙트 주소 복사**
+   - Remix의 **Deployed Contracts** 섹션에서 주소 확인
+2. **MetaMask 지갑 열기**
+   - **Tokens Tab** 클릭
+   - 오른쪽의 세로 점 3개 아이콘 클릭
+   - **Import tokens** 클릭
+3. **토큰 컨트랙트 주소 입력**
+   - ERC-20 표준을 따르므로 MetaMask가 자동으로 토큰 정보 감지
+4. **정보 확인**
+   - Address, Token Symbol, Decimals가 올바른지 확인
+5. **Next** 클릭하여 정보 확인 후 **Import** 클릭
+   - MetaMask UI를 통해 잔액 확인 및 다른 사람에게 토큰 전송 가능
+
+## Summary
+
+지난 두 레슨에서 간단한 ERC-20 스마트 컨트랙트를 작성하고 Remix를 사용하여 Sepolia에 배포했다.
+
+### 학습 내용
+
+- Remix 사용법
+- 권한이 있는 간단한 ERC-20 컨트랙트 작성법
+- 스마트 컨트랙트 컴파일 및 배포 방법
+- Remix 워크스페이스에서 스마트 컨트랙트 핀 고정 방법
+- Remix에서 스마트 컨트랙트 함수 호출 방법
+- MetaMask에 커스텀 토큰 스마트 컨트랙트 추가 방법
+
+---
+
+**Reference**: [Cyfrin Updraft - Deploying An ERC-20 Contract](https://updraft.cyfrin.io/courses/chainlink-fundamentals/smart-contract-and-solidity-fundamentals/deploying-an-erc20-contract)
