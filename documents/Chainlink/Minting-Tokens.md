@@ -33,3 +33,37 @@
 - MetaMask의 Tokens 탭에서 직접 확인 (사전에 토큰 추가 필요)
 
 ---
+
+## Allowance와 토큰 승인 (Token Approvals)
+
+토큰 승인은 다른 주소가 내 토큰을 대신 사용할 수 있도록 권한을 부여하는 기능입니다.
+
+### 주요 사용 사례
+
+DeFi 애플리케이션에서 중개 스마트 컨트랙트를 통해 ERC20 토큰을 내 지갑에서 다른 지갑이나 컨트랙트로 전송할 때 사용됩니다.
+
+### approve 함수
+
+토큰 사용 권한을 부여할 때 사용합니다.
+
+**파라미터:**
+
+- `spender`: 토큰을 사용할 권한을 받을 주소
+- `amount`: 사용 가능한 최대 수량
+
+### allowance 함수
+
+특정 컨트랙트나 주소가 내 토큰을 사용할 권한이 있는지 확인할 때 사용합니다.
+
+**파라미터:**
+
+- `owner`: 토큰 소유자 주소
+- `spender`: 권한을 확인할 주소
+
+**반환값:** 승인된 토큰 수량
+
+---
+
+## 참고 자료
+
+- [Cyfrin Updraft - Minting Tokens](https://updraft.cyfrin.io/courses/chainlink-fundamentals/smart-contract-and-solidity-fundamentals/minting-tokens)
