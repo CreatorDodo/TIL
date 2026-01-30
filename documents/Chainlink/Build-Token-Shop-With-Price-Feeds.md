@@ -36,3 +36,18 @@ import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/
 import { Ownable } from "@openzeppelin/contracts@4.6.0/access/Ownable.sol";
 import { MyERC20 } from "./MyERC20.sol";
 ```
+
+### Ownable
+
+계약에 소유자를 설정하기 위해 OpenZeppelin의 `Ownable` 계약을 상속합니다. 이를 통해 `onlyOwner` modifier를 사용하여 계약 소유자만 특정 함수를 호출할 수 있도록 제한할 수 있습니다.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import { Ownable } from "@openzeppelin/contracts@5.2.0/access/Ownable.sol";
+
+contract TokenShop is Ownable {
+    constructor() Ownable(msg.sender) {} // 계약 배포자(msg.sender)를 소유자로 설정
+}
+```
