@@ -51,3 +51,54 @@ contract TokenShop is Ownable {
     constructor() Ownable(msg.sender) {} // 계약 배포자(msg.sender)를 소유자로 설정
 }
 ```
+
+### State Variables와 Constructor
+
+**Immutable 변수 (생성자에서 설정):**
+
+- `i_priceFeed`: ETH/USD Price Feed 계약 (AggregatorV3Interface 타입으로 캐스팅)
+- `i_token`: MyERC20 계약 인스턴스
+
+**Constant 상태 변수:**
+
+- `TOKEN_DECIMALS`: MyERC20 토큰의 소수점 자릿수 (18)
+- `TOKEN_USD_PRICE`: USD 기준 토큰 가격
+
+```solidity
+AggregatorV3Interface internal immutable i_priceFeed;
+MyERC20 public immutable i_token;
+
+uint256 public constant TOKEN_DECIMALS = 18;
+uint256 public constant TOKEN_USD_PRICE = 2 * 10 ** TOKEN_DECIMALS; // 2 USD (18 decimals)
+
+event BalanceWithdrawn();
+
+error TokenShop__ZeroETHSent();
+error TokenShop__CouldNotWithdraw();
+
+constructor(address tokenAddress) Ownable(msg.sender) {
+    i_token = MyERC20(tokenAddress);
+    /**
+    * Network: Sepolia
+    * Aggregator: ETH/USD
+    * Address: 0x694AA1769357215DE4FAC081bf1f309aDC325306
+    */
+    i_priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+}
+```
+
+### Receive Function
+
+사용자가 ETH를 보내고 토큰을 받을 수 있게 하는 특수 함수입니다. `receive` 함수는 사용자가 특정 함수를 지정하지 않고 계약 주소로 ETH를 직접 보낼 때 자동으로 실행됩니다.
+
+```solidity
+receive() external payable {
+    if (msg.value == 0) {
+        revert TokenShop__ZeroETHSent();
+    }
+    // 전송된 ETH를 토큰 수량으로 변환 후 민팅
+    i_token.mint(msg.sender, amountToMint(msg.value));
+}
+```
+
+> **Note:** TokenShop 계약에 `MyERC20::mint` 호출 권한을 부여해야 합니다.
