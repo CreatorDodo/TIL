@@ -102,3 +102,36 @@ receive() external payable {
 ```
 
 > **Note:** TokenShop 계약에 `MyERC20::mint` 호출 권한을 부여해야 합니다.
+
+### amountToMint Function
+
+ETH/USD 가격을 조회하여 전송된 ETH를 USD로 변환하고, 해당 USD 금액에 해당하는 토큰 수량을 계산합니다:
+
+```solidity
+function amountToMint(uint256 amountInETH) public view returns (uint256) {
+    // ETH를 USD로 변환
+    uint256 ethUsd = uint256(getChainlinkDataFeedLatestAnswer()) * 10 ** 10; // 8 decimals -> 18 decimals
+    uint256 ethAmountInUSD = amountInETH * ethUsd / 10 ** 18; // ETH = 18 decimals
+    return (ethAmountInUSD * 10 ** TOKEN_DECIMALS) / TOKEN_USD_PRICE;
+}
+```
+
+### Chainlink Data Feeds 구현
+
+ETH/USD 가격을 가져오는 함수입니다:
+
+```solidity
+/**
+* Returns the latest answer
+*/
+function getChainlinkDataFeedLatestAnswer() public view returns (int) {
+    (
+        /*uint80 roundID*/,
+        int price,
+        /*uint startedAt*/,
+        /*uint timeStamp*/,
+        /*uint80 answeredInRound*/
+    ) = i_priceFeed.latestRoundData();
+    return price;
+}
+```
