@@ -135,3 +135,38 @@ function getChainlinkDataFeedLatestAnswer() public view returns (int) {
     return price;
 }
 ```
+
+### Withdraw Function
+
+계약 소유자가 계약 내 ETH를 인출할 수 있는 함수입니다:
+
+```solidity
+function withdraw() external onlyOwner {
+    (bool success, ) = payable(owner()).call{value: address(this).balance}("");
+    if (!success) {
+        revert TokenShop__CouldNotWithdraw();
+    }
+    emit BalanceWithdrawn();
+}
+```
+
+> 스마트 계약 내 ETH 전송에 대한 자세한 내용은 [Updraft 강의](https://updraft.cyfrin.io/)를 참조하세요.
+
+---
+
+## TokenShop 계약 배포
+
+1. Remix의 **Deploy & Run Transactions** 탭으로 이동
+2. Contract 필드에서 `TokenShop.sol` 선택
+3. MetaMask가 Sepolia 네트워크에 연결되어 있는지 확인
+4. Environment를 **Injected Provider - MetaMask**로 설정
+5. Constructor 파라미터에 이전에 배포한 `MyERC20.sol` 계약 주소 입력
+6. **Deploy** 클릭 → MetaMask에서 **Confirm**으로 트랜잭션 서명
+
+배포 후:
+
+- Remix 콘솔에서 트랜잭션 세부 정보 확인
+- Deployed Contracts에서 TokenShop 계약 주소 복사
+- 계약을 **Pin**하여 나중에도 접근 가능하도록 설정
+
+---
