@@ -170,3 +170,55 @@ function withdraw() external onlyOwner {
 - 계약을 **Pin**하여 나중에도 접근 가능하도록 설정
 
 ---
+
+## TokenShop 접근 제어 설정
+
+TokenShop 계약에 MyERC20 토큰을 민팅할 수 있는 `MINTER_ROLE` 권한을 부여해야 합니다.
+
+### MINTER_ROLE 확인
+
+1. Deployed contracts에서 MyERC20 계약 드롭다운 찾기
+2. `MINTER_ROLE` 함수 클릭하여 값 확인
+
+```
+0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6
+```
+
+이 값은 "MINTER_ROLE" 문자열의 keccak256 해시입니다.
+
+### 권한 부여
+
+1. `grantRole` 함수 확장
+2. 파라미터 입력:
+   - **role**: `0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6`
+   - **account**: TokenShop 계약 주소
+3. **transact** 클릭 → MetaMask에서 **Confirm**
+
+### 권한 확인
+
+`hasRole` 함수를 사용하여 권한이 제대로 부여되었는지 확인합니다:
+
+| 파라미터 | 값                                                                   |
+| -------- | -------------------------------------------------------------------- |
+| role     | `0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6` |
+| account  | TokenShop 계약 주소                                                  |
+
+반환값이 `true`이면 권한이 정상적으로 부여된 것입니다.
+
+---
+
+## Chainlink Price Feeds에서 가격 데이터 가져오기
+
+1. TokenShop 계약 드롭다운에서 `getChainlinkDataFeedLatestAnswer` 함수 찾기
+2. 함수 호출하여 트랜잭션 전송
+3. **8자리 소수점**을 가진 가격이 반환됨
+
+**가격 변환 예시:**
+
+반환값 `191796000000`을 실제 가격으로 변환하려면:
+
+```
+191796000000 / 10^8 = $1917.96
+```
+
+> **Note:** 피드마다 정밀도가 다를 수 있습니다. 각 피드의 소수점 자릿수는 [Price Feeds Documentation](https://docs.chain.link/data-feeds/price-feeds/addresses)에서 확인할 수 있습니다 ("Show More Details" 체크).
