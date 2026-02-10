@@ -36,3 +36,32 @@ Chainlink Automation은 세 가지 고유한 트리거 메커니즘을 지원합
 
 - 스마트 컨트랙트가 발생시킨 블록체인 이벤트(로그)를 모니터링합니다
 - 지정된 이벤트가 발생하면 Chainlink Automation이 관련 함수를 실행하여 이벤트 기반 자동화를 가능하게 합니다
+
+## Automation 아키텍처
+
+Chainlink Automation Network는 Automation Registry 스마트 컨트랙트에 의해 조정되는 전문 Automation 노드로 구성됩니다. 이 Registry는 upkeep 등록을 관리하고 성공적인 실행에 대해 노드에 보상을 제공합니다.
+
+- 개발자는 upkeep을 등록할 수 있습니다
+- 노드 운영자는 Automation 노드로 등록할 수 있습니다
+- 네트워크는 Chainlink의 OCR3 프로토콜을 기반으로 한 피어투피어 시스템을 사용하여 운영됩니다
+
+### 실행 프로세스
+
+1. Automation 노드는 실행 가능한 upkeep을 지속적으로 스캔합니다
+2. 노드는 어떤 upkeep을 수행할지 합의에 도달합니다
+3. 암호화 서명된 보고서를 생성합니다
+4. Registry는 upkeep 함수를 실행하기 전에 이러한 보고서를 검증합니다
+
+### 주요 이점
+
+- **암호화 보장**: 실행의 암호화 보장
+- **내장된 중복성**: 여러 노드에 걸친 내장된 중복성
+- **네트워크 혼잡 저항**: 정교한 가스 관리로 네트워크 혼잡에 대한 저항력
+- **안정적인 성능**: 가스 가격 급등이나 블록체인 재구성 중에도 안정적인 성능
+
+시스템은 네트워크 상태를 유지하고 높은 신뢰성과 성능을 보장하기 위한 내부 모니터링 및 알림 메커니즘을 포함합니다.
+
+## 추가 정보
+
+- Chainlink Automation은 여러 블록체인을 지원합니다. 지원되는 네트워크에 대한 자세한 내용은 [지원 네트워크 페이지](https://docs.chain.link/chainlink-automation/supported-networks)를 참조하세요
+- Chainlink Automation 사용 비용에 대한 정보는 [Automation 경제학 페이지](https://docs.chain.link/chainlink-automation/automation-economics)에서 확인할 수 있습니다
