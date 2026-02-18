@@ -9,3 +9,22 @@ Custom logic upkeeps를 사용하면 스마트 컨트랙트 내부에 특수 조
 - **유연성**: 시간 외에도 온체인 조건이나 조건의 조합 등 Solidity로 표현 가능한 모든 조건 사용 가능
 
 ---
+
+## Custom Logic Automation 개념
+
+### AutomationCompatibleInterface
+
+컨트랙트가 custom logic automation과 호환되려면 `AutomationCompatibleInterface`를 상속하고 다음 두 함수를 구현해야 한다.
+
+| 함수            | 역할                                                                        |
+| --------------- | --------------------------------------------------------------------------- |
+| `checkUpkeep`   | upkeep 실행 준비 여부를 판단하는 로직. 준비되면 `true`, 아니면 `false` 반환 |
+| `performUpkeep` | Automation이 실행하는 upkeep 함수. 실제 수행 로직 포함                      |
+
+### 동작 흐름
+
+1. Chainlink Automation이 주기적으로 `checkUpkeep` 호출
+2. `checkUpkeep`이 `true` 반환 → `performUpkeep` 실행
+3. `checkUpkeep`이 `false` 반환 → 아무 작업 없음
+
+---
