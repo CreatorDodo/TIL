@@ -28,3 +28,26 @@ Custom logic upkeeps를 사용하면 스마트 컨트랙트 내부에 특수 조
 3. `checkUpkeep`이 `false` 반환 → 아무 작업 없음
 
 ---
+
+## CustomLogic 컨트랙트 생성
+
+### 1. 파일 생성
+
+Remix의 `contracts` 폴더에 `CustomLogic.sol` 파일을 생성한다.
+
+### 2. 코드 구조 요약
+
+#### Constructor
+
+- `_updateInterval`: 업데이트 간격(초 단위)
+- 배포 시 `_updateInterval`을 `300`(5분)으로 설정
+- `lastUpdatedTimestamp`를 `block.timestamp`로 초기화
+
+#### 필수 구현 함수
+
+- **checkUpkeep**: upkeep 실행 여부 결정. 조건 충족 시 `true` 반환
+- **performUpkeep**: 실제 upkeep 수행 로직
+
+> **참고**: 예제에서는 설명을 위해 시간 기반 트리거를 사용하지만, custom logic은 온체인에서 표현 가능한 모든 조건을 평가할 수 있다.
+
+---
