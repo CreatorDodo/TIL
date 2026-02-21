@@ -51,3 +51,29 @@ Remix의 `contracts` 폴더에 `CustomLogic.sol` 파일을 생성한다.
 > **참고**: 예제에서는 설명을 위해 시간 기반 트리거를 사용하지만, custom logic은 온체인에서 표현 가능한 모든 조건을 평가할 수 있다.
 
 ---
+
+## 배포 및 검증
+
+### Sepolia에 배포
+
+1. 이전 레슨과 동일한 절차로 Sepolia에 배포
+2. **Constructor parameter** 설정: `_updateInterval` = `300` (5분)
+3. Deploy 클릭
+4. 배포된 컨트랙트 인스턴스를 workspace에 고정하여 Remix 재로드 시 유지되도록 함
+
+### Etherscan 검증
+
+1. **Flattening**: 외부 import가 있으므로 먼저 flatten 수행
+   - File Explorer에서 `CustomLogic.sol` 우클릭 → **Flatten** 선택
+   - `CustomLogic_flattened.sol` 파일이 생성됨
+2. Flatten된 코드 전체를 Etherscan 검증 시 입력
+
+---
+
+## checkUpkeep 테스트
+
+5분이 지나면 `checkUpkeep`이 `true`를 반환한다. 이는 custom logic upkeep 설정 후 automation 시스템이 `performUpkeep`을 실행할 준비가 되었음을 의미한다.
+
+> **팁**: `checkUpkeep`과 `performUpkeep`을 수동으로 호출할 때는 빈 bytes 배열(`0x`)을 인자로 전달한다.
+
+---
