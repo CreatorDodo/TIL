@@ -77,3 +77,55 @@ Remix의 `contracts` 폴더에 `CustomLogic.sol` 파일을 생성한다.
 > **팁**: `checkUpkeep`과 `performUpkeep`을 수동으로 호출할 때는 빈 bytes 배열(`0x`)을 인자로 전달한다.
 
 ---
+
+## Custom Logic Upkeep 등록
+
+### 1. Chainlink Automation 앱 접속
+
+컨트랙트 배포 후 [Chainlink Automation](https://automation.chain.link/)에서 automation job 생성
+
+### 2. 트리거 선택
+
+- **Custom Logic** 선택
+- 배포된 컨트랙트 주소 입력
+- **Next** 클릭
+
+### 3. Upkeep 상세 설정
+
+| 항목                    | 설명                                                          |
+| ----------------------- | ------------------------------------------------------------- |
+| **Upkeep name**         | 대시보드에 표시되는 이름 (예: "TimeBased Counter")            |
+| **Admin Address**       | 연결된 지갑이 기본값. 필요 시 변경 가능                       |
+| **Gas limit**           | upkeep 함수 최대 가스량 (기본값: 500,000)                     |
+| **Starting balance**    | Chainlink Automation 비용 지불용 LINK. 예시에서는 5 LINK 권장 |
+| **Project information** | 선택 사항 (비워두어도 됨)                                     |
+
+### 4. 등록 완료
+
+- 등록 요청 확인
+- 메시지 서명으로 upkeep 소유권 인증
+
+---
+
+## 대시보드 확인
+
+### Overview
+
+- Upkeep 상태
+- 마지막 실행 시각
+- 현재 LINK 잔액
+- 소비된 LINK 양
+
+### Details
+
+- 다음 실행 예정 시각
+- 호출될 함수 정보
+
+### History
+
+- 실행 이력 전체 조회
+- 5분 경과 후 페이지 새로고침 시 실행 완료 확인 가능
+
+### 동작 확인
+
+Remix에서 5분 경과 후 `counter` 값이 증가했는지 확인한다. Upkeep은 LINK가 소진되거나 pause될 때까지 계속 실행된다.
