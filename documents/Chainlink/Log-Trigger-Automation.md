@@ -12,3 +12,25 @@ Log Trigger는 Chainlink Automation에서 **온체인 이벤트(로그)**에 반
 → **이벤트 기반 자동화(event-driven automation)** 패턴을 보여준다.
 
 ---
+
+## 1. EventEmitter 컨트랙트 배포 및 검증
+
+### 1.1 컨트랙트 생성
+
+- Remix **Automation** 워크스페이스 → `contracts` 폴더 안에 `log-trigger` 폴더 생성
+- `EventEmitter.sol` 파일 추가
+- `emitCountLog` 호출 시 `WantsToCount` 이벤트를 emit하는 단순 컨트랙트 작성 (강의 코드 저장소 코드 사용)
+
+### 1.2 배포
+
+- 이전 레슨과 동일한 절차로 **Sepolia**에 배포
+- 배포된 컨트랙트 인스턴스를 워크스페이스에 **pin** 해두기
+- `emitCountLog` 호출 후 트랜잭션 확인 시 `WantsToCount` 이벤트가 emit됨
+
+### 1.3 Etherscan 검증
+
+- 이전 레슨과 동일한 절차로 Etherscan에 **Verify and Publish**
+- Contract 탭 옆에 **녹색 체크** 표시 확인
+- **Events** 탭에서 `emitCountLog` 호출로 발생한 로그 확인
+
+---
