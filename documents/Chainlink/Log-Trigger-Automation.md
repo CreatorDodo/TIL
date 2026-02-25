@@ -34,3 +34,32 @@ Log Trigger는 Chainlink Automation에서 **온체인 이벤트(로그)**에 반
 - **Events** 탭에서 `emitCountLog` 호출로 발생한 로그 확인
 
 ---
+
+## 2. LogTrigger 컨트랙트 배포 및 검증
+
+### 2.1 컨트랙트 요구사항
+
+`log-trigger` 폴더에 `LogTrigger.sol` 생성. 다음을 만족해야 한다.
+
+- **ILogAutomation** 인터페이스 상속 (Log Trigger Automation 호환)
+- 구현할 함수 두 개:
+  1. **checkLog**
+     - Automation이 “할 일이 있는지” 시뮬레이션할 때 호출
+     - `performData`를 반환 → 이후 `performUpkeep`에 전달
+     - 여기서는 **이벤트를 보낸 주소(caller)**를 `performData`에 넣어, 나중에 로그로 남김
+  2. **performUpkeep**
+     - Automation이 실제 업킵을 수행할 때 실행
+     - `performData`를 사용해 **counter 증가** + **누가 이벤트를 트리거했는지** 로그로 emit
+
+강의 코드 저장소의 코드를 복사해 `LogTrigger.sol`에 붙여넣기.
+
+### 2.2 배포
+
+- Sepolia에 배포 (이전 레슨과 동일), 배포된 인스턴스 **pin**
+- Remix에서 `counted` 값을 확인하면 **0**으로 나옴
+
+### 2.3 Etherscan 검증
+
+- **파일을 flatten**한 뒤, 해당 코드로 검증 진행
+
+---
