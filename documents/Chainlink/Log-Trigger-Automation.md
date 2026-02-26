@@ -63,3 +63,45 @@ Log Trigger는 Chainlink Automation에서 **온체인 이벤트(로그)**에 반
 - **파일을 flatten**한 뒤, 해당 코드로 검증 진행
 
 ---
+
+## 3. Log Trigger Upkeep 생성 (Chainlink Automation)
+
+배포가 끝났다면 Chainlink Automation 앱에서 **이벤트 발생 시 counter를 올리는 Upkeep**을 등록한다.
+
+### 3.1 트리거 설정
+
+1. **Register new Upkeep** 선택
+2. Trigger mechanism: **Log trigger** 선택
+3. **Contract to automate**: LogTrigger 컨트랙트 주소 입력
+4. **Contract emitting logs**: EventEmitter 컨트랙트 주소 입력
+5. **Emitted log**: `WantsToCount` 이벤트 선택
+6. Log index topic filters는 **비워 두기** → **Next**
+
+### 3.2 Upkeep 상세 정보
+
+| 항목                    | 설명                                               |
+| ----------------------- | -------------------------------------------------- |
+| **Upkeep name**         | 대시보드에 보일 이름 (예: "LogTrigger Counter")    |
+| **Admin Address**       | Upkeep 관리 주소 (기본값: 연결된 지갑)             |
+| **Gas limit**           | Upkeep 함수 실행에 허용할 최대 가스 (기본 500,000) |
+| **Starting balance**    | Automation 비용용 LINK 잔액 (예: 5 LINK)           |
+| **Project information** | 선택 사항, 비워 둬도 됨                            |
+
+**Register Upkeep** 클릭 후 등록 트랜잭션 제출 → 확인 후 **소유권 검증 메시지 서명**. 이 시점에 Automation 생성 완료.
+
+### 3.3 동작 확인
+
+- **View Upkeep**으로 이전 레슨과 같이 Upkeep 상세 확인
+- Remix **Deploy & run transactions**에서 EventEmitter의 **emitCountLog** 호출
+- 트랜잭션 완료 후 Automation 대시보드 **History**에 해당 Upkeep 실행 기록 표시
+- LogTrigger 컨트랙트의 **counted** 값을 다시 확인하면 **1 증가**한 것을 확인 가능
+
+---
+
+## 요약
+
+- **EventEmitter**: `WantsToCount` 이벤트 emit → Log Trigger의 입력
+- **LogTrigger**: `checkLog` / `performUpkeep` 구현, counter 증가 및 트리거한 주소 로그
+- **Chainlink Automation**: Log trigger로 Upkeep 등록 → 이벤트 발생 시 자동으로 `performUpkeep` 실행
+
+이 구성을 통해 **로그 트리거 기반**으로 컨트랙트 함수 실행을 자동화할 수 있다.
